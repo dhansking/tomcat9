@@ -1,4 +1,4 @@
-Ansible Role: Wildfly
+Ansible Role: Tomcat9
 =====================
 
 This role install Tomcat9 (default: v.9.0.21 ) on Centos7 and Ubuntu.
