@@ -1,0 +1,4 @@
+---
+tomcat_packages:
+  - openjdk-8-jdk
+  - unzip

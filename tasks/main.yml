@@ -1,0 +1,67 @@
+---
+# Import variables.
+- name: Import variables
+  include_vars: "{{ ansible_os_family }}.yml"
+
+# Import tasks.
+- name: Import tasks RedHat
+  include_tasks: task_RedHat.yml
+  when: ansible_os_family == 'RedHat'
+
+- name: Import tasks Ubuntu
+  include_tasks: task_Ubuntu.yml
+  when: ansible_distribution == 'Ubuntu'
+  
+# Tomcat user/group
+- name: Add tomcat user/group
+  block:
+    - name: Add group
+      group:
+        name: tomcat
+        state: present
+   
+    - name: Add tomcat user
+      user:
+        name: tomcat
+        group: tomcat
+        shell: /bin/nologin
+        system: yes
+  tags: t_user-group
+
+# Install Tomcat
+- name: Install Tomcat
+  block: 
+  - name: Download Tomcat
+    unarchive:
+      src: "http://www-us.apache.org/dist/tomcat/tomcat-9/v{{ tomcat_tomcat_version }}/bin/apache-tomcat-{{ tomcat_tomcat_version }}.tar.gz"
+      dest: "{{ tomcat_tomcat_install }}"
+      owner: tomcat
+      group: tomcat
+      remote_src: yes
+
+  - name: Link Tomcat
+    file:
+      src: "{{ tomcat_tomcat_install }}/apache-tomcat-{{ tomcat_tomcat_version }}"
+      dest: "{{ tomcat_tomcat_install }}/tomcat"
+      owner: tomcat
+      group: tomcat
+      state: link      
+
+  # Templates
+  - name: Tomcat Users
+    template: 
+      src: tomcat-users.xml.j2
+      dest: "{{ tomcat_tomcat_install }}/tomcat/conf/tomcat-users.xml"
+  
+  - name: Tomcat Manager Disable Localhost Restriction
+    template: 
+      src: context.xml.j2
+      dest: "{{ tomcat_tomcat_install }}/tomcat/webapps/manager/META-INF/context.xml"
+    when: not tomcat_tomcat_manager_localhost_only
+
+  - name: Service Tomcat Template
+    template: 
+      src: tomcat_service.j2
+      dest: /etc/systemd/system/tomcat.service
+    notify: restart-tomcat
+  tags: t_tomcat-install

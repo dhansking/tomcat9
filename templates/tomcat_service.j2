@@ -1,0 +1,17 @@
+[Unit]
+Description=Apache Tomcat 9
+After=syslog.target network.target
+
+[Service]
+User=tomcat
+Group=tomcat
+Type=forking
+Environment=CATALINA_PID={{ tomcat_tomcat_install }}/tomcat/tomcat.pid
+Environment=CATALINA_HOME={{ tomcat_tomcat_install }}/tomcat
+Environment=CATALINA_BASE={{ tomcat_tomcat_install }}/tomcat
+ExecStart={{ tomcat_tomcat_install }}/tomcat/bin/startup.sh
+ExecStop={{ tomcat_tomcat_install }}/tomcat/bin/shutdown.sh
+Restart=on-failure
+
+[Install] 
+WantedBy=multi-user.target

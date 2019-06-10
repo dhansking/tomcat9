@@ -1,0 +1,5 @@
+---
+tomcat_tomcat_version: '9.0.21'
+tomcat_tomcat_admin_password: 'password'
+tomcat_tomcat_manager_localhost_only: False
+tomcat_tomcat_install: '/opt'
