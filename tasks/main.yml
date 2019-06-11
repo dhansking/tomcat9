@@ -63,7 +63,13 @@
     template: 
       src: tomcat_service.j2
       dest: /etc/systemd/system/tomcat.service
-    notify: restart-tomcat
+
+  # Tomcat service.
+  - name: Tomcat service
+    service: 
+      name: tomcat
+      state: started
+      enabled: yes
 
   # Tomcat Verify is listening on port 8080
   - name: Tomcat Verify port 8080
