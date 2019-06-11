@@ -64,4 +64,11 @@
       src: tomcat_service.j2
       dest: /etc/systemd/system/tomcat.service
     notify: restart-tomcat
+
+  # Tomcat Verify is listening on port 8080
+  - name: Tomcat Verify port 8080
+    wait_for:
+      port: 8080
+      timeout: 1
+
   tags: t_tomcat-install
